@@ -24,7 +24,7 @@ TYPE = {
 };
 WHILE-STATEMENT =  "todavia", "(", CONDITION_MORE, ")", "{", BLOCK ,"}" ;
 FOR-STATEMENT = "por", "(" TYPE, ASSIGNMENT, ";", IDENTIFIER, "<", "IDENTIFIER, ";", IDENTIFIER, "++" ")", "{", BLOCK ,"}" ;
-PRINT = "println", "(", EXPRESSION, ")" ;
+PRINT = "imprimir", "(", EXPRESSION, ")" ;
 EXPRESSION = TERM, { ("+" | "-"), TERM } ;
 CONDITION_MORE = (CONDITION | CONDITION_MORE);
 CONDITION = (EXPRESSION, LOGICAL, EXPRESSION);
