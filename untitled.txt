@@ -3,9 +3,8 @@
 ```
 EBNF DE C EM PERUANO
 
-BLOCK = { COMMAND };
 COMMAND = ( λ | ASSIGNMENT | PRINT |  LOOP-STATEMENT | IF-STATEMENT | JUMP-STATEMENT). ";" ;
-ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ;
+
 LOOP-STATEMENT = ( WHILE-STATEMENT | FOR-STATEMENT) ; 
 TYPE = {
       char
@@ -20,12 +19,12 @@ TYPE = {
     | ENUM-SPECIFIER
     | TYPEDEF-NAME
 };
-WHILE-STATEMENT =  "todavia", "(", CONDITION_MORE, ")", "{", BLOCK ,"}" ;
+
 FOR-STATEMENT = "por", "(" TYPE, ASSIGNMENT, ";", IDENTIFIER, "<", "IDENTIFIER, ";", IDENTIFIER, "++" ")", "{", BLOCK ,"}" ;
-PRINT = "imprimir", "(", EXPRESSION, ")" ;
-EXPRESSION = TERM, { ("+" | "-"), TERM } ;
-CONDITION_MORE = (CONDITION | CONDITION_MORE);
-CONDITION = (EXPRESSION, LOGICAL, EXPRESSION);
+
+
+
+
 LOGICAL = 
              *=
             | /=
@@ -36,8 +35,7 @@ LOGICAL =
             | >=
             | &&
             | ||;
-IF-STATEMENT = "se", "(", CONDITION_MORE, ")", "{", BLOCK, "}" {ELSE-STATEMENT}| ELSE-IF-STATEMENT;
-ELSE-IF-STATEMENT = "seno","se", "(", CONDITION_MORE, ")", "{", BLOCK, "}" {ELSE-STATEMENT}| ELSE-IF-STATEMENT;
+
 ELSE-STATEMENT = "seno", "{", (BLOCK| IF-STATEMENT), "}"
 TERM = FACTOR, { ("*" | "/"), FACTOR };
 FACTOR = ("+" | "-"), FACTOR | "(", EXPRESSION, ")" | NUMBER;
