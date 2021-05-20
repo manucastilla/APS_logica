@@ -7,19 +7,7 @@ BLOCK = { COMMAND };
 COMMAND = ( λ | ASSIGNMENT | PRINT |  LOOP-STATEMENT | IF-STATEMENT | JUMP-STATEMENT). ";" ;
 ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ;
 LOOP-STATEMENT = ( WHILE-STATEMENT | FOR-STATEMENT) ; 
-TYPE = {
-      char
-    | short
-    | int
-    | long
-    | float
-    | double
-    | signed
-    | unsigned
-    | STRUCT_OR_UNION_SPECIFIER
-    | ENUM-SPECIFIER
-    | TYPEDEF-NAME
-};
+
 WHILE-STATEMENT =  "todavia", "(", CONDITION_MORE, ")", "{", BLOCK ,"}" ;
 FOR-STATEMENT = "por", "(" TYPE, ASSIGNMENT, ";", IDENTIFIER, "<", "IDENTIFIER, ";", IDENTIFIER, "++" ")", "{", BLOCK ,"}" ;
 PRINT = "imprimir", "(", EXPRESSION, ")" ;

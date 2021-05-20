@@ -5,6 +5,15 @@ class Lexer():
     def __init__(self):
         self.lexer = LexerGenerator()
 
+# reserved = {
+#     'if' : 'IF',
+#     'then' : 'THEN',
+#     'else' : 'ELSE',
+#     'while' : 'WHILE',
+#     ...
+#  }
+
+#  tokens = ['LPAREN','RPAREN',...,'ID'] + list(reserved.values())
     def _add_tokens(self):
         # Print
         self.lexer.add('PRINT', r'imprimir')
@@ -15,24 +24,30 @@ class Lexer():
         self.lexer.add('CLOSE_BRACES', r'\}')
         # Semi Colon
         self.lexer.add('SEMI_COLON', r'\;')
-        # Operators
+       # Operators
+        # self.lexer.add('PLUS_ONE', r'\++')`
+        self.lexer.add('EQUAL_EQUAL', r'\=\=')
+        self.lexer.add('PLUS_EQUAL', r'\+\=')
+        self.lexer.add('MINUS_EQUAL', r'\-\=')
+
+        self.lexer.add('AND', r'\&\&')
+        self.lexer.add('OR', r'\|\|')
         self.lexer.add('EQUAL', r'\=')
         self.lexer.add('SUM', r'\+')
         self.lexer.add('SUB', r'\-')
-        # self.lexer.add('PLUS_ONE', r'\++')
-        # self.lexer.add('PLUS', r'\+\=')
-        # self.lexer.add('MINUS', r'\+\-')
-        self.lexer.add('AND', r'\&\&')
-        self.lexer.add('OR', r'\|\|')
+
         self.lexer.add('MUL', r'\*')
         self.lexer.add('DIV', r'/')
         self.lexer.add('REST', r'\%')
         # Logical Operators
         self.lexer.add("GREATER", r'\<')
         self.lexer.add("LESS", r'\>')
+        # If-else
+        self.lexer.add("IF", r'se')
+        self.lexer.add("ELSE", r'seno')
         # Identifier
         # IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
-        self.lexer.add("IDENTIFIER", r'[a-zA-Z]+([a-zA-Z]|/d+|_)')
+        self.lexer.add("IDENTIFIER", r'[a-zA-Z]*([a-zA-Z]|/d+|_)')
         # Number
         self.lexer.add('NUMBER', r'\d+')
         # Types
@@ -41,9 +56,7 @@ class Lexer():
         # Statement
         self.lexer.add("WHILE", r'todavia')
         self.lexer.add("FOR", r'por')
-        # If-else
-        self.lexer.add("IF", r'se')
-        self.lexer.add("ELSE", r'seno')
+
         # Ignore spaces
         self.lexer.ignore('\s+')
 

@@ -2,8 +2,11 @@ from parser_ import Parser
 from lexical import Lexer
 
 
-text_input = """
-imprimir(10 % 4);
+text_input = """{
+    y = 1;
+    x = 1;
+    imprimir(y == x);
+    }
 """
 
 
