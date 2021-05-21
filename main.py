@@ -3,10 +3,15 @@ from lexical import Lexer
 
 
 text_input = """{
-    y = 1;
     x = 1;
-    imprimir(y == x);
+    todavia(x mas_grande 5){
+        x = x + 1;
+        imprimir(x);
     }
+    se (x lo_mismo 5){
+        imprimir(10);
+    }
+}
 """
 
 

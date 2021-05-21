@@ -14,21 +14,15 @@ PRINT = "imprimir", "(", EXPRESSION, ")" ;
 EXPRESSION = TERM, { ("+" | "-"), TERM } ;
 CONDITION_MORE = (CONDITION | CONDITION_MORE);
 CONDITION = (EXPRESSION, LOGICAL, EXPRESSION);
-LOGICAL = 
-             *=
-            | /=
-            | %=
-            | +=
-            | -=
-            | <=
-            | >=
-            | &&
-            | ||;
+OREXPRESSION = ANDEXPRESSION, { "o", ANDEXPRESSION};
+ANDEXPRESSION = EQUEEXPRESSION, { "y", EQEXPRESSION};
+EQUEEXPRESSION = RELEXPRESSION, { "lo_mismo", RELEXPRESION};
+RELEXPRESSION = EXPRESSION, { ("mas_grande" | "menor"), EXPRESSION}
 IF-STATEMENT = "se", "(", CONDITION_MORE, ")", "{", BLOCK, "}" {ELSE-STATEMENT}| ELSE-IF-STATEMENT;
 ELSE-IF-STATEMENT = "seno","se", "(", CONDITION_MORE, ")", "{", BLOCK, "}" {ELSE-STATEMENT}| ELSE-IF-STATEMENT;
 ELSE-STATEMENT = "seno", "{", (BLOCK| IF-STATEMENT), "}"
 TERM = FACTOR, { ("*" | "/"), FACTOR };
-FACTOR = ("+" | "-"), FACTOR | "(", EXPRESSION, ")" | NUMBER;
+FACTOR = ("+" | "-" | "queno"), FACTOR | "(", EXPRESSION, ")" | NUMBER;
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
 NUMBER = DIGIT, { DIGIT } ;
 LETTER = ( a | ... | z | A | ... | Z ) ;

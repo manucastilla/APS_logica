@@ -1,7 +1,7 @@
 from rply import ParserGenerator
 from ast import(Number, Sum, Sub, Print, Mul, Div, Rest,
                 If, Or, And, Less, Greater, MinusEqual, PlusEqual, PlusOne,
-                Block, Setter, Getter, Equal_Equal
+                Block, Setter, Getter, Equal_Equal, UnOp, Identifier, While
                 )
 
 
@@ -10,12 +10,13 @@ class Parser():
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
             ['NUMBER', 'PRINT', 'OPEN_PAREN', 'CLOSE_PAREN',
-             'SEMI_COLON', 'SUM', 'SUB', 'MUL', 'DIV', 'REST',
-             'OPEN_BRACES', 'CLOSE_BRACES',
-             'OR', 'LESS', 'GREATER', 'AND', 'MINUS_EQUAL', 'PLUS_EQUAL',
-             'PLUS_ONE', 'EQUAL', 'IDENTIFIER', 'EQUAL_EQUAL']
+             'SEMI_COLON', 'OPEN_BRACES', 'CLOSE_BRACES',
+             'EQUAL', 'IDENTIFIER', 'LESS', 'GREATER',
+             'SUM', 'SUB', 'NOT', 'MUL', 'DIV', 'EQUAL_EQUAL',
+             'AND', 'OR', 'IF', 'ELSE', 'WHILE']
 
-            # 'IF', 'ELSE',
+            #  , , 'REST', 'SUB_EQUAL', 'PLUS_EQUAL',
+            # 'PLUS_ONE'
 
             #  precedence=[
             #      ('left', [ 'SUM'])
@@ -43,115 +44,155 @@ class Parser():
         @self.pg.production('command : SEMI_COLON')
         @self.pg.production('command : assignment SEMI_COLON')
         @self.pg.production('command : println')
+        @self.pg.production('command : if_cond')
+        @self.pg.production('command : while_cond')
+        # @self.pg.production('command : while')
         def command(p):
             return p[0]
 
-        #################### PRINT ####################
+        #################### ASSIGNMENT ####################
+        @self.pg.production('assignment : IDENTIFIER EQUAL parseOREXPR')
+        def assignment(p):
+            # print()
+            return Setter(p[0].getstr(), p[2])
 
-        @self.pg.production('println : PRINT OPEN_PAREN expression CLOSE_PAREN SEMI_COLON')
-        @self.pg.production('println : PRINT OPEN_PAREN variable CLOSE_PAREN SEMI_COLON')
+        #################### PRINT ####################
+        @self.pg.production('println : PRINT OPEN_PAREN parseOREXPR CLOSE_PAREN SEMI_COLON')
         # @self.pg.production('println : PRINT OPEN_PAREN variable expression CLOSE_PAREN SEMI_COLON')
         def println(p):
             return Print(p[2])
 
-        #################### ASSIGNMENT ####################
+        #################### WHILE AND FOR ####################
+        #                                  p[0] p[1]        p[2]       p[3]         p[4]
+        @self.pg.production('while_cond : WHILE OPEN_PAREN parseOREXPR CLOSE_PAREN begin')
+        def while_cond(p):
+            condition = p[2]
+            todo = p[4]
+            return While([condition, todo])
 
-        @self.pg.production('assignment : IDENTIFIER EQUAL expression')
-        def assignment(p):
-            return Setter(p[0].getstr(), p[2])
+        #################### IF ####################
+        #                             p[0] p[1]        p[2]       p[3]         p[4]       p[5]  p[6]
+        @self.pg.production('if_cond : IF OPEN_PAREN parseOREXPR CLOSE_PAREN begin')
+        @self.pg.production('if_cond : IF OPEN_PAREN parseOREXPR CLOSE_PAREN begin ELSE begin')
+        def if_cond(p):
+            # print(p[0].gettokentype())
+            if p[0].gettokentype() == "IF":
+                if len(p) == 5:
+                    condition = p[2]
+                    todo = p[4]
+                    return If([condition, todo, None])
+                else:
+                    return If([p[2], p[4], p[6]])
 
-        @self.pg.production('variable : IDENTIFIER')
-        def variable(p):
-            return Getter(p[0].getstr())
+        #################### parseOREXPR ####################
 
-        #################### IF/ELSE ####################
-        # @self.pg.production('if : IF OPEN_PAREN expression CLOSE_PAREN OPEN_BRACES expression CLOSE_BRACES')
-        # def if_func(p):
-        #     left = p[0]
-        #     right = p[0]
-        #     return If(left, right)
-        # @self.pg.production('''for : por OPEN_PAREN IDENTIFIER EQUAL NUMBER
-        # SEMI_COLON IDENTIFIER LESS CLOSE_PAREN OPEN_BRACES
-        # ''')
-
-        #################### TERM / EXPRESSION ####################
-        # variable and number
-        @self.pg.production('expression : variable   SUB         expression')
-        @self.pg.production('expression : variable   SUM         expression')
-        @self.pg.production('expression : variable   MUL         expression')
-        @self.pg.production('expression : variable   DIV         expression')
-        @self.pg.production('expression : variable   REST        expression')
-        @self.pg.production('expression : variable   OR          expression')
-        @self.pg.production('expression : variable   AND         expression')
-        @self.pg.production('expression : variable   GREATER     expression')
-        @self.pg.production('expression : variable   LESS        expression')
-        @self.pg.production('expression : variable   PLUS_EQUAL  expression')
-        @self.pg.production('expression : variable   MINUS_EQUAL expression')
-        @self.pg.production('expression : variable   EQUAL_EQUAL expression')
-        # variable and variable
-        @self.pg.production('expression : variable   SUM         variable')
-        @self.pg.production('expression : variable   SUB         variable')
-        @self.pg.production('expression : variable   MUL         variable')
-        @self.pg.production('expression : variable   DIV         variable')
-        @self.pg.production('expression : variable   REST        variable')
-        @self.pg.production('expression : variable   OR          variable')
-        @self.pg.production('expression : variable   AND         variable')
-        @self.pg.production('expression : variable   GREATER     variable')
-        @self.pg.production('expression : variable   LESS        variable')
-        @self.pg.production('expression : variable   PLUS_EQUAL  variable')
-        @self.pg.production('expression : variable   MINUS_EQUAL variable')
-        @self.pg.production('expression : variable   EQUAL_EQUAL variable')
-        # number and number
-        @self.pg.production('expression : expression SUM  expression')
-        @self.pg.production('expression : expression SUB  expression')
-        @self.pg.production('expression : expression MUL  expression')
-        @self.pg.production('expression : expression DIV  expression')
-        @self.pg.production('expression : expression REST expression')
-        # logOp
-        @self.pg.production('expression : expression OR          expression')
-        @self.pg.production('expression : expression AND         expression')
-        @self.pg.production('expression : expression GREATER     expression')
-        @self.pg.production('expression : expression LESS        expression')
-        @self.pg.production('expression : expression PLUS_EQUAL  expression')
-        @self.pg.production('expression : expression MINUS_EQUAL expression')
-        @self.pg.production('expression : expression EQUAL_EQUAL expression')
-        # @self.pg.production('expression : number PLUS_ONE')
-        def expression(p):
-            if len(p) > 2:
+        @self.pg.production('parseOREXPR : parseANDEXPR')
+        @self.pg.production('parseOREXPR : parseANDEXPR OR parseOREXPR')
+        def parseOREXPR(p):
+            if len(p) == 1:
+                return p[0]
+            else:
                 right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'OR':
+                    return Or(left, right)
 
+        #################### parseANDEXPR ####################
+        @self.pg.production('parseANDEXPR : parseEQEXPR')
+        @self.pg.production('parseANDEXPR : parseEQEXPR AND parseANDEXPR')
+        def parseANDEXPR(p):
+            if len(p) == 1:
+                return p[0]
+            else:
+                right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'AND':
+                    return Equal_Equal(left, right)
+
+        #################### parseEQEXPR ####################
+        @self.pg.production('parseEQEXPR : parseRELEXPR')
+        @self.pg.production('parseEQEXPR : parseRELEXPR EQUAL_EQUAL parseEQEXPR')
+        def parseEQEXPR(p):
+            if len(p) == 1:
+                return p[0]
+            else:
+                right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'EQUAL_EQUAL':
+                    return Equal_Equal(left, right)
+
+        #################### parseRELEXPR ####################
+        @self.pg.production('parseRELEXPR : expression')
+        @self.pg.production('parseRELEXPR : expression LESS parseRELEXPR')
+        @self.pg.production('parseRELEXPR : expression GREATER parseRELEXPR')
+        def parseRELEXPR(p):
+            if len(p) == 1:
+                return p[0]
+            else:
+                right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'LESS':
+                    return Less(left, right)
+                elif operator.gettokentype() == 'GREATER':
+                    return Greater(left, right)
+
+        #################### EXPRESSION ####################
+        @self.pg.production('expression : term')
+        @self.pg.production('expression : term SUM expression')
+        @self.pg.production('expression : term SUB expression')
+        def expression(p):
+            if len(p) == 1:
+                return p[0]
+            else:
+                right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'SUM':
+                    return Sum(left, right)
+                elif operator.gettokentype() == 'SUB':
+                    return Sub(left, right)
+
+        #################### TERM ####################
+        @self.pg.production('term : factor')
+        @self.pg.production('term : factor DIV term')
+        @self.pg.production('term : factor MUL term')
+        def term(p):
+            if len(p) == 1:
+                return p[0]
+            else:
+                right = p[2]
+                left = p[0]
+                operator = p[1]
+                if operator.gettokentype() == 'DIV':
+                    return Div(left, right)
+                elif operator.gettokentype() == 'MUL':
+                    return Mul(left, right)
+
+        #################### FACTOR ####################
+        @self.pg.production('factor : SUM factor')
+        @self.pg.production('factor : SUB factor')
+        @self.pg.production('factor : NOT factor')  # preciso fazer
+        # @self.pg.production('factor : OPEN_PAREN parseOREXPR CLOSE_PAREN')
+        @self.pg.production('factor : NUMBER')
+        @self.pg.production('factor : IDENTIFIER')
+        # fazer o readln
+        def factor(p):
+            # right = p[2]
             left = p[0]
-            operator = p[1]
-            if operator.gettokentype() == 'SUM':
-                return Sum(left, right)
-            elif operator.gettokentype() == 'SUB':
-                return Sub(left, right)
-            elif operator.gettokentype() == 'MUL':
-                return Mul(left, right)
-            elif operator.gettokentype() == 'DIV':
-                return Div(left, right)
-            elif operator.gettokentype() == 'REST':
-                return Rest(left, right)
-            elif operator.gettokentype() == 'OR':
-                return Or(left, right)
-            elif operator.gettokentype() == 'AND':
-                return And(left, right)
-            elif operator.gettokentype() == 'LESS':
-                return Less(left, right)
-            elif operator.gettokentype() == 'GREATER':
-                return Greater(left, right)
-            # elif operator.gettokentype() == 'PLUS_ONE':
-            #     return PlusOne(left, None)
-            elif operator.gettokentype() == 'MINUS_EQUAL':
-                return PlusEqual(left, right)
-            elif operator.gettokentype() == 'MINUS_EQUAL':
-                return MinusEqual(left, right)
-            elif operator.gettokentype() == 'EQUAL_EQUAL':
-                return Equal_Equal(left, right)
-
-        @self.pg.production('expression : NUMBER')
-        def number(p):
-            return Number(p[0].value)
+            if left.gettokentype() == 'SUM':
+                return UnOp("SUM", p[1])
+            elif left.gettokentype() == 'SUB':
+                return UnOp("SUB", p[1])
+            elif left.gettokentype() == 'NOT':
+                return UnOp("SUB", p[1])
+            elif left.gettokentype() == "NUMBER":
+                return Number(p[0].value)
+            elif left.gettokentype() == "IDENTIFIER":
+                return Getter(p[0].getstr())
 
         @self.pg.error
         def error_handle(token):

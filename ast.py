@@ -111,18 +111,54 @@ class Rest(BinaryOp):
         return int(self.left.eval() % self.right.eval())
 
 
-# class For(BinaryOp, Number):
-#     def eval(self):
-#         i = self.value.eval()
-#         while i < self.left.eval():
-#             self.right.eval()
-#             i += 1
+class UnOp(BinaryOp):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
 
-
-class If(BinaryOp):
     def eval(self):
-        if self.left.eval():
-            self.right.eval()
+        if self.value == "SUM":
+            return self.children.eval()
+        elif self.value == "SUB":
+            return -self.children.eval()
+        elif self.value == "NOT":
+            return int(not self.children.eval())
+
+
+class Identifier():
+    def __init__(self, value):
+        self.value = value
+
+    def eval(self):
+        return st.getter(self.value)
+
+    # class For(BinaryOp, Number):
+    #     def eval(self):
+    #         i = self.value.eval()
+    #         while i < self.left.eval():
+    #             self.right.eval()
+    #             i += 1
+
+
+class If():
+    def __init__(self, children):
+        self.children = children
+
+    def eval(self):
+        if self.children[0].eval():
+            self.children[1].eval()
+        else:
+            if self.children[2] != None:
+                self.children[2].eval()
+
+
+class While():
+    def __init__(self, children):
+        self.children = children
+
+    def eval(self):
+        while self.children[0].eval():
+            self.children[1].eval()
 
 
 class Print():
