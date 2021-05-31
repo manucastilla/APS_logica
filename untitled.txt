@@ -1,46 +1,15 @@
-# APS_logica
 
-```
-EBNF DE C EM PERUANO
+def main(){
+    
+}
 
-COMMAND = ( λ | ASSIGNMENT | PRINT |  LOOP-STATEMENT | IF-STATEMENT | JUMP-STATEMENT). ";" ;
-
-LOOP-STATEMENT = ( WHILE-STATEMENT | FOR-STATEMENT) ; 
-TYPE = {
-      char
-    | short
-    | int
-    | long
-    | float
-    | double
-    | signed
-    | unsigned
-    | STRUCT_OR_UNION_SPECIFIER
-    | ENUM-SPECIFIER
-    | TYPEDEF-NAME
-};
-
-FOR-STATEMENT = "por", "(" TYPE, ASSIGNMENT, ";", IDENTIFIER, "<", "IDENTIFIER, ";", IDENTIFIER, "++" ")", "{", BLOCK ,"}" ;
-
-
-
-
-LOGICAL = 
-             *=
-            | /=
-            | %=
-            | +=
-            | -=
-            | <=
-            | >=
-            | &&
-            | ||;
-
-ELSE-STATEMENT = "seno", "{", (BLOCK| IF-STATEMENT), "}"
-TERM = FACTOR, { ("*" | "/"), FACTOR };
-FACTOR = ("+" | "-"), FACTOR | "(", EXPRESSION, ")" | NUMBER;
-IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
-NUMBER = DIGIT, { DIGIT } ;
-LETTER = ( a | ... | z | A | ... | Z ) ;
-DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
-```
+ef eval(self):
+        if self.v_type in ["int", "bool", "string"]:
+            return st.setter(self.value, self.v_type)
+        else:
+            s = st.getter(self.value, self.v_type)
+            if s[1] == "bool":
+                return st.setter_valor(
+                    self.value, int(bool(self.children[0].eval()[0]))
+                )
+            return st.setter_valor(self.value, self.children[0].Evaluate()[0])

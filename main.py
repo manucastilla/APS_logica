@@ -2,15 +2,13 @@ from parser_ import Parser
 from lexical import Lexer
 
 
-text_input = """{
+text_input = """
+funcion main()
+{
+    // comentario //
+    bool x;
     x = 1;
-    todavia(x mas_grande 5){
-        x = x + 1;
-        imprimir(x);
-    }
-    se (x lo_mismo 5){
-        imprimir(10);
-    }
+    imprimir(x);
 }
 """
 

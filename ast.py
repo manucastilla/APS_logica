@@ -27,11 +27,20 @@ class Block():
 
 
 class Setter(BinaryOp):
-    def __init__(self, left, right):
-        super().__init__(left, right)
+    def __init__(self, left, right, v_type):
+        self.left = left
+        self.right = right
+        self.v_type = v_type
 
     def eval(self):
-        return st.setter(self.left, self.right.eval())
+        if self.v_type in ["int", "bool"]:
+            return st.setter(self.left, self.v_type)
+        else:
+            s = st.getter(self.left)
+            if s[1] == "bool":
+                return st.setter_valor(
+                    self.left, int(bool(self.right.eval()))
+                )
 
 
 class Getter(BinaryOp):

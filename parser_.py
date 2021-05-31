@@ -13,8 +13,9 @@ class Parser():
              'SEMI_COLON', 'OPEN_BRACES', 'CLOSE_BRACES',
              'EQUAL', 'IDENTIFIER', 'LESS', 'GREATER',
              'SUM', 'SUB', 'NOT', 'MUL', 'DIV', 'EQUAL_EQUAL',
-             'AND', 'OR', 'IF', 'ELSE', 'WHILE']
+             'AND', 'OR', 'IF', 'ELSE', 'WHILE', 'TYPE', 'FUNCTION']
 
+            # , 'COMMA'
             #  , , 'REST', 'SUB_EQUAL', 'PLUS_EQUAL',
             # 'PLUS_ONE'
 
@@ -26,6 +27,21 @@ class Parser():
     def parse(self):
         #################### BLOCK ####################
         #                               p[0]       p[1]      p[2]
+        @self.pg.production('start : def_function ')
+        def begin(p):
+            return p[0]
+
+        @self.pg.production('def_function : FUNCTION IDENTIFIER OPEN_PAREN CLOSE_PAREN begin')
+        # @self.pg.production('def_function : FUNCTION IDENTIFIER OPEN_PAREN params CLOSE_PAREN begin')
+        def def_function(p):
+            if len(p) == 5:
+                # setter
+                return p[4]
+            else:
+                return p[5]
+
+        # @self.pg.production('params : IDENTIFIER')
+        # @self.pg.production('params : IDENTIFIER COMMA params')
         @self.pg.production('begin : OPEN_BRACES block CLOSE_BRACES ')
         def begin(p):
             return p[1]
@@ -46,17 +62,21 @@ class Parser():
         @self.pg.production('command : println')
         @self.pg.production('command : if_cond')
         @self.pg.production('command : while_cond')
+        @self.pg.production('command : definition SEMI_COLON')
         # @self.pg.production('command : while')
         def command(p):
             return p[0]
 
-        #################### ASSIGNMENT ####################
+        #################### ASSIGNMENT and DEFINITION ####################
         @self.pg.production('assignment : IDENTIFIER EQUAL parseOREXPR')
         def assignment(p):
-            # print()
-            return Setter(p[0].getstr(), p[2])
+            return Setter(p[0].getstr(), p[2], None)
 
+        @self.pg.production('definition : TYPE IDENTIFIER')
+        def definition(p):
+            return Setter(p[1].getstr(), None, p[0].getstr())
         #################### PRINT ####################
+
         @self.pg.production('println : PRINT OPEN_PAREN parseOREXPR CLOSE_PAREN SEMI_COLON')
         # @self.pg.production('println : PRINT OPEN_PAREN variable expression CLOSE_PAREN SEMI_COLON')
         def println(p):

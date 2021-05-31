@@ -15,6 +15,8 @@ class Lexer():
 
 #  tokens = ['LPAREN','RPAREN',...,'ID'] + list(reserved.values())
     def _add_tokens(self):
+        # comentarios
+        self.lexer.ignore(r"//.*?//")
         # Print
         self.lexer.add('PRINT', r'imprimir')
         # Parenthesis and Braces
@@ -24,6 +26,12 @@ class Lexer():
         self.lexer.add('CLOSE_BRACES', r'\}')
         # Semi Colon
         self.lexer.add('SEMI_COLON', r'\;')
+        self.lexer.add('COMMA', r'\,')
+        # function
+        self.lexer.add('FUNCTION', r'funcion')
+        # type
+        self.lexer.add('TYPE', 'int')
+        self.lexer.add('TYPE', 'bool')
        # Operators
         # self.lexer.add('PLUS_ONE', r'\++')`
         self.lexer.add('EQUAL_EQUAL', r'lo_mismo')
