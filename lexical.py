@@ -29,6 +29,7 @@ class Lexer():
         self.lexer.add('COMMA', r'\,')
         # function
         self.lexer.add('FUNCTION', r'funcion')
+        self.lexer.add('RETURN', r'vuelve')
         # type
         self.lexer.add('TYPE', 'int')
         self.lexer.add('TYPE', 'bool')
